@@ -1,2 +1,7 @@
+*~
+*.swp*
+deps
+_build/*
+*/_build
 vendor/*
 .env*
