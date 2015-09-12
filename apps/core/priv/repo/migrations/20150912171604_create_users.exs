@@ -3,8 +3,10 @@ defmodule Core.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:user) do
-      add :name,    :string
-      add :email,   :string
+      add :name,      :string
+      add :email,     :string
+      add :hash,      :string
+      add :recovery_hash, :string
 
       timestamps
     end
