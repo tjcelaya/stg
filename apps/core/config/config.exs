@@ -22,3 +22,21 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
+
+
+repo_conf = [
+    adapter: Ecto.Adapters.MySQL,
+    username: "root",
+    password: "",
+    database: "stg",
+    hostname: "127.0.0.1",
+    port: 3306
+]
+
+if Mix.env == :test do
+    repo_conf = Keyword.put repo_conf, :pool, Ecto.Adapters.SQL.Sandbox
+else
+    repo_conf = Keyword.put repo_conf, :pool_size, 10
+end
+
+config :core, Core.Repo, repo_conf

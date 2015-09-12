@@ -1,4 +1,0 @@
-StgCore
-=======
-
-** TODO: Add description **

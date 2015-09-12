@@ -1,12 +1,14 @@
-defmodule StgCore.Mixfile do
+defmodule Core.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :stg_core,
+    [app: :core,
      version: "0.0.1",
      deps_path: "../../deps",
      lockfile: "../../mix.lock",
      elixir: "~> 1.0",
+     build_embedded: Mix.env == :prod,
+     start_permanent: Mix.env == :prod,
      deps: deps]
   end
 
@@ -14,8 +16,8 @@ defmodule StgCore.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger],
-     mod: {StgCore, []}]
+    [applications: [:logger, :mariaex, :ecto],
+     mod: {Core, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -32,6 +34,9 @@ defmodule StgCore.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    []
+    [
+      {:ecto,"1.0.2"},
+      {:mariaex,"0.4.3"}
+    ]
   end
 end

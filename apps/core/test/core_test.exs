@@ -1,4 +1,4 @@
-defmodule StgCoreTest do
+defmodule CoreTest do
   use ExUnit.Case
 
   test "the truth" do
