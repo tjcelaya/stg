@@ -43,6 +43,10 @@ defmodule Core.User do
     @alphas |> Sample.take(2 + :random.uniform(12)) |> to_string
   end
 
+  def generate_legendary_name do
+    [:names, :connectives, :words] |> Enum.map(&Words.sample/1) |> Enum.join " "
+  end
+
 end
 
 # iex(8)>   Repo.all(from u in User, select: u)
