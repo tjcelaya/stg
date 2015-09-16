@@ -15,11 +15,7 @@ defimpl Sample, for: List do
 end
 
 defimpl Sample, for: Range do
-  def take(enum) do
-    enum |> Enum.to_list |> Sample.take
-  end
-
-  def take(enum, n) when 0 < n do
+  def take(enum, n \\ 1) when 0 < n do
     enum |> Enum.to_list |> Sample.take(n)
   end
 end
@@ -34,6 +30,8 @@ defmodule Words do
     names: "/usr/share/dict/propernames",
     connectives: "/usr/share/dict/connectives"
   ]
+
+  @allowed_kinds Keyword.keys @dict_of_dicts
 
   def start_link do
     opts = [name: __MODULE__]
@@ -53,6 +51,10 @@ defmodule Words do
   end
 
   def sample(kind) do
-    _sample Process.whereis(__MODULE__), kind
+    unless kind in @allowed_kinds do
+      raise "Kind not in #{inspect @allowed_kinds}"
+    end
+
+    _sample(Process.whereis(__MODULE__), kind)
   end
 end

@@ -1,4 +1,14 @@
+defmodule Tag do
+  use Ecto.Model
+  schema "tags" do
+    field :name, :string
+  end
+end
+
 defmodule Core.User do
+  alias Core.Character
+
+
   use Ecto.Model
   schema "user" do
     # # here we associate the `:local_weather` from every City that belongs_to
@@ -7,9 +17,9 @@ defmodule Core.User do
 
     # has_many :cities, City
 
-    field :name,      :string
-    field :email,     :string
-    field :hash,      :string
+    field :name, :string, null: false
+    field :email, :string, null: false
+    field :hash, :string
     field :recovery_hash, :string
     timestamps
 
@@ -60,3 +70,4 @@ end
 #                   |> group_by([book], book.id) \
 #                   |> having([book], book.id >= 1)
 # iex> Repo.all(query)
+
