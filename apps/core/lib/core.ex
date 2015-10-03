@@ -8,8 +8,8 @@ defmodule Core do
     children = [
       # Define workers and child supervisors to be supervised
       # worker(Core.Worker, [arg1, arg2, arg3])
-      worker(Core.Repo, []),
-      worker(Words, [])
+      worker(Core.Repo, [])
+      # worker(Words, [])
     ]
 
     # http://elixir-lang.org/docs/stable/elixir/Supervisor.html

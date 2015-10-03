@@ -16,18 +16,22 @@ defmodule Core.Mixfile do
 
   # check `mix help compile.app`
   def application do
-    [applications: [:logger, :mariaex, :ecto],
+    [applications: [:logger, :mariaex, :ecto, :tzdata],
      mod: {Core, []}]
   end
 
   defp deps do
     [
       {:ecto,"1.0.2"},
-      {:mariaex,"0.4.3"}
+      {:mariaex,"0.4.3"},
+      {:timex, "~> 0.19.5"},
+      {:exactor, "~> 2.2.0"},
+      {:poison, "~> 1.5"},
+      {:ja_serializer, "~> 0.4.0"},
     ]
   end
 
-  defp aliases do 
+  defp aliases do
     [
       redb: ["ecto.drop", "ecto.create", "ecto.migrate", "core.seed"],
       "core.seed": ["run priv/repo/seed.exs"],

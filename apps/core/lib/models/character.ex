@@ -6,6 +6,7 @@ defmodule Core.Character do
 
   schema "character" do
     field :name,      :string
+    field :ident, :any, virtual: true
 
     has_one :user, User
     has_many :child_rel, CharacterRelationship, foreign_key: :parent_id

@@ -1,30 +1,4 @@
-defprotocol Sample do
-  @doc "Returns a random element from an enumerable"
-  def take(enum)
-  def take(enum, n)
-end
-
-defimpl Sample, for: List do
-  def take(list) do
-    Enum.at list, :random.uniform(length(list)) - 1
-  end
-
-  def take(list, n) when 0 < n do
-    for _ <- 1..n, do: Sample.take list
-  end
-end
-
-defimpl Sample, for: Range do
-  def take(enum, n \\ 1) when 0 < n do
-    enum |> Enum.to_list |> Sample.take(n)
-  end
-end
-
-
-
 defmodule Words do
-  # use Supervisor
-
   @dict_of_dicts [
     words: "/usr/share/dict/words",
     names: "/usr/share/dict/propernames",
@@ -37,17 +11,15 @@ defmodule Words do
     opts = [name: __MODULE__]
 
     Agent.start_link(fn ->
-      @dict_of_dicts |> Enum.map(fn {k, v} ->
-        {k, v |> File.read! |> String.split}
+      @dict_of_dicts |> Enum.map(fn {k, filename} ->
+        words = case File.read filename do
+          {:ok, f} -> String.split f
+          _ -> [ Atom.to_string k ]
+        end
+        { k, words }
       end)
     end,
     opts)
-  end
-
-  defp _sample(l, kind) do
-    Agent.get l, fn l ->
-      Sample.take Dict.get(l, kind)
-    end
   end
 
   def sample(kind) do
@@ -55,6 +27,8 @@ defmodule Words do
       raise "Kind not in #{inspect @allowed_kinds}"
     end
 
-    _sample(Process.whereis(__MODULE__), kind)
+    Agent.get Process.whereis(__MODULE__), fn l ->
+      Enum.random Dict.get(l, kind)
+    end
   end
 end

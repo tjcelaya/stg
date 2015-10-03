@@ -4,6 +4,7 @@ defmodule Core.Seed do
   alias Core.Character
   alias Core.CharacterRelationship, as: CR
   alias Core.Territory
+  alias Core.Territory.Type, as: TerritoryType
   alias Core.Lineage
 
   alias Core.Repo
@@ -16,7 +17,9 @@ defmodule Core.Seed do
   """
 
   def run(_args \\ []) do
+    Words.start_link
     create_lineages()
+    create_territory_types()
     create_territories()
     create_characters()
     create_character_relations()
@@ -31,14 +34,35 @@ defmodule Core.Seed do
 
   end
 
+  def create_territory_types do
+    insert_models [
+      %TerritoryType{ name: "Forest" },
+      %TerritoryType{ name: "Desert" },
+      %TerritoryType{ name: "Tundra" },
+    ]
+  end
+
   def create_territories do
-    # insert_models [
-    #   %Territory{
-    #     "Land of " <> 
-    #   },%Territory{
-    #     "Land of " <> 
-    #   }
-    # ]
+    insert_models [
+      %Territory{
+        name: "Land of " <> Words.sample(:words),
+        pos_x: 0,
+        pos_y: 0,
+        type_id: 1,
+      },%Territory{
+        pos_x: 0,
+        pos_y: 1,
+        type_id: 2,
+      },%Territory{
+        pos_x: 1,
+        pos_y: 0,
+        type_id: 1,
+      },%Territory{
+        pos_x: 1,
+        pos_y: 1,
+        type_id: 3,
+      }
+    ]
   end
 
   def create_characters do

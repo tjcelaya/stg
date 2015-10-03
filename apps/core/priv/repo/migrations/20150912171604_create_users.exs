@@ -1,9 +1,9 @@
 defmodule Core.Repo.Migrations.CreateUsers do
   use Ecto.Migration
 require IEx
-  defmacrop name do
+  defmacrop name(opts \\ [null: false]) do
     quote do
-      add :name, :string, null: false
+      add :name, :string, opts
     end
   end
 
@@ -22,12 +22,13 @@ require IEx
       name
     end
 
-    create table :character do 
+    create table :character do
       name
-      add :user_id, references(:user, null: false)
+      add :user_id, references(:user)
+      # add :user_id, references(:user, null: false)
       # nullable? AI could be implemented as userless characters
 
-      add :lineage_id, references(:lineage)
+      add :character_id, references(:character)
     end
 
     # serial is size 20
@@ -35,7 +36,6 @@ require IEx
       add :parent_id, references(:character, null: false)
       add :child_id, references(:character, null: false)
     end
-
 
     create table :resource_type do
       name
@@ -46,9 +46,17 @@ require IEx
       add :type_id, references(:resource_type)
     end
 
-    create table :territory do
+    create table :territory_type do
       name
-      # territories should be 
+    end
+
+    create table :territory do
+      name []
+      add :pos_x, :integer
+      add :pos_y, :integer
+
+      add :character_id, references(:character)
+      add :type_id, references(:territory_type)
     end
 
     create table :resource_territory do
@@ -62,14 +70,6 @@ require IEx
       add :attr, :string
       add :val, :integer
       add :dt, :timestamp
-    end
-
-    create table :tags do
-      name
-    end
-    create table :tag_tag, primary_key: false do
-      add :t1_id, :integer
-      add :t2_id, :integer
     end
   end
 end

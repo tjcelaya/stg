@@ -1,22 +1,8 @@
-defmodule Tag do
-  use Ecto.Model
-  schema "tags" do
-    field :name, :string
-  end
-end
-
 defmodule Core.User do
+  use Ecto.Model
   alias Core.Character
 
-
-  use Ecto.Model
   schema "user" do
-    # # here we associate the `:local_weather` from every City that belongs_to
-    # # a Country through that Country's `has_many :cities, City` association
-    # has_many :weather, through: [:cities, :local_weather]
-
-    # has_many :cities, City
-
     field :name, :string, null: false
     field :email, :string, null: false
     field :hash, :string
@@ -49,8 +35,8 @@ defmodule Core.User do
   end
 
   @alphas Enum.concat(?A..?Z, ?a..?z)
-  def generate_name() do
-    @alphas |> Sample.take(2 + :random.uniform(12)) |> to_string
+  def generate_name do
+    @alphas |> Enum.take_random(2 + :random.uniform(12)) |> to_string
   end
 
   def generate_legendary_name do
@@ -58,16 +44,3 @@ defmodule Core.User do
   end
 
 end
-
-# iex(8)>   Repo.all(from u in User, select: u)
-# iex(11)>  Repo.get User, 1
-
-# iex> query = Book |> select([book], book.id) \
-#                   |> where([book], like(book.title, "%Programming%")) \
-#                   |> order_by([book], desc: book.id) \
-#                   |> limit(1) \
-#                   |> offset(0) \
-#                   |> group_by([book], book.id) \
-#                   |> having([book], book.id >= 1)
-# iex> Repo.all(query)
-
