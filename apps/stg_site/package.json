@@ -1,16 +1,13 @@
 {
-  "repository": {
-  },
-  "dependencies": {
-    "brunch": "^1.8.5",
-    "babel-brunch": "^5.1.1",
-    "clean-css-brunch": ">= 1.0 < 1.8",
-    "css-brunch": ">= 1.0 < 1.8",
-    "javascript-brunch": ">= 1.0 < 1.8",
-    "uglify-js-brunch": ">= 1.0 < 1.8"
-  },
+  "repository": {},
+  "dependencies": {},
   "scripts": {
     "build": "browserify -t babelify priv/static/js/app.js -o priv/static/js/app.dist.js",
     "watch": "watchify -t babelify priv/static/js/app.js -o priv/static/js/app.dist.js"
+  },
+  "devDependencies": {
+    "babelify": "^6.4.0",
+    "browserify": "^11.2.0",
+    "watchify": "^3.5.0"
   }
 }

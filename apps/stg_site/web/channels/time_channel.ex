@@ -22,9 +22,9 @@ defmodule Site.TimeChannel do
 end
 
 defmodule DebugSocket do
-  def start_link, do: Agent.start_link fn -> nil end, name: __MODULE__
+  def start_link, do: Agent.start_link(fn -> nil end, name: __MODULE__)
 
-  def assign(c), do: Agent.update __MODULE__, fn x -> c end
+  def assign(c), do: Agent.update(__MODULE__, fn x -> c end)
 
-  def get, do: Agent.get __MODULE__, fn x -> x end
+  def get, do: Agent.get(__MODULE__, fn x -> x end)
 end
