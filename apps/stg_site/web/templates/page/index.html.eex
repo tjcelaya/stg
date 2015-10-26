@@ -1,0 +1,1 @@
+<div>It is currently <span id='time'><%= inspect :erlang.timestamp %></span></div>
