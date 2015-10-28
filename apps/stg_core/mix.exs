@@ -28,6 +28,7 @@ defmodule Core.Mixfile do
       {:exactor, "~> 2.2.0"},
       {:poison, "~> 1.5"},
       {:ja_serializer, "~> 0.4.0"},
+      {:gproc, "~> 0.5.0"},
     ]
   end
 
