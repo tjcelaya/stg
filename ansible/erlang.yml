@@ -4,6 +4,13 @@
   # serial: "50%"
   sudo: yes
   tasks:
+    - name: Python APT
+      when: ansible_os_family == "Debian"
+      apt:
+        name=python-apt
+        update_cache=yes
+        state=present
+
     - name: Erlang Solutions Repo (apt)
       when: ansible_os_family == "Debian"
       apt_repository:
