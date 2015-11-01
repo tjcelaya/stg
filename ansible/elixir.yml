@@ -1,27 +1,29 @@
 - hosts: all
   gather_facts: yes
-  # remote_user: craun
-  # serial: "50%"
+  # remote_user: yoozer
+  # serial: "50%"  # how many machines to affect at a time
   sudo: yes
   tasks:
-    - name: Python APT
+    - name: Python APT Tools
       when: ansible_os_family == "Debian"
       apt:
         name=python-apt
         update_cache=yes
         state=present
 
-    - name: Erlang Solutions Repo (apt)
-      when: ansible_os_family == "Debian"
+    - name: Repo install
       apt_repository:
-        repo='deb http://binaries.erlang-solutions.com/{{ansible_distribution}} {{ansible_distribution_release}} contrib'
+        repo='deb http://binaries.erlang-solutions.com/{{ansible_distribution|lower}} {{ansible_distribution_release}} contrib'
+        update_cache=yes
         state=present
 
-    - name: Erlang Solutions Repo (apt)
+    - name: Erlang (apt)
       when: ansible_os_family == "Debian"
+      with_items:
+        - elixir
+        - erlang-dev
       apt:
-        name=erlang
-        update_cache=yes
+        pkg={{item}}
         state=present
 
     - name: Erlang Solutions Repo Key (CentOS)
@@ -30,12 +32,11 @@
         key=http://packages.erlang-solutions.com/rpm/erlang_solutions.asc
         state=present
 
-    - name: Erlang + Headers (Debian)
+    - name: Erlang Solutions Repo (Debian)
       when: ansible_os_family == "RedHat"
       copy:
         src=erlang-solutions.repo
         dest=/etc/yum.repos.d/erlang-solutions.repo
-
 
     - name: Erlang + Headers (CentOS)
       when: ansible_os_family == "RedHat"
