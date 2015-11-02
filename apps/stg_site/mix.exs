@@ -48,7 +48,9 @@ defmodule Site.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:cowboy, "~> 1.0"},
       {:gproc, "~> 0.5"},
-      {:stg_core, in_umbrella: true}
+      {:beaker, "~> 1.1"},
+      {:stg_core, in_umbrella: true},
+      {:exactor, "~> 2.2.0"},
     ]
   end
 end

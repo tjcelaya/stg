@@ -2,7 +2,7 @@ defmodule Site.TimeSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "time:*", Site.TimeChannel
+  channel "time*", Site.TimeChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

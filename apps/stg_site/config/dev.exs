@@ -11,8 +11,8 @@ config :stg_site, Site.Endpoint,
   debug_errors: true,
   code_reloader: true,
   cache_static_lookup: false,
-  check_origin: false,
-  watchers: [ npm: ["run", "watch"] ]
+  check_origin: false
+  # watchers: [ npm: ["run", "watch"] ] # this should be run separately
 
 # Watch static and templates for browser reloading.
 config :stg_site, Site.Endpoint,

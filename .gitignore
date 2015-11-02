@@ -6,3 +6,5 @@ _build/*
 vendor/*
 .env*
 *.beam
+*.dist.js
+*.js.map

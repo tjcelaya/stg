@@ -10,7 +10,7 @@ defmodule Site do
       # Start the endpoint when the application starts
       supervisor(Site.Endpoint, []),
       # Here you could define other workers and supervisors as children
-      # worker(Site.Worker, [arg1, arg2, arg3]),
+      worker(Site.TimeChannel.Clients, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
