@@ -3,6 +3,7 @@
   # remote_user: yoozer
   # serial: "50%"  # how many machines to affect at a time
   sudo: yes
+  remote_user: root
   tasks:
     - name: Python APT Tools
       when: ansible_os_family == "Debian"
@@ -12,6 +13,7 @@
         state=present
 
     - name: Repo install
+      when: ansible_os_family == "Debian"
       apt_repository:
         repo='deb http://binaries.erlang-solutions.com/{{ansible_distribution|lower}} {{ansible_distribution_release}} contrib'
         update_cache=yes
@@ -40,7 +42,11 @@
 
     - name: Erlang + Headers (CentOS)
       when: ansible_os_family == "RedHat"
+      with_items:
+        - elixir
+        - erlang-dev
       yum:
-        name=erlang
+        name={{item}}
         state=latest
         update_cache=yes
+
