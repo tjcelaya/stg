@@ -1,41 +1,23 @@
-import { Socket } from 'phoenix-js'
-import { createStore } from 'redux'
-
-let L = console.log.bind(console)
-let E = console.error.bind(console)
-let makeGUID = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-  // stolen from http://stackoverflow.com/a/2117523
-  var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-  return v.toString(16);
+require('./util')
+import React from 'react'
+window.React = React; // for dev tools
+import { render } from 'react-dom'
+require('react-tap-event-plugin')();
+import { Router, Route } from 'react-router'
+import { createHistory, useBasename } from 'history'
+const history = useBasename(createHistory)({
+  basename: '/'
 })
-let GUID = localStorage['GUID'] || (localStorage['GUID'] = makeGUID())
-let socket = new Socket('/_ws')
+import Root from './components/root'
+import Home from './components/home';
+import About from './components/about';
 
-let s = createStore((current = null, action) => {
-  switch (action.type) {
-  case 'SET':
-    return action.now
-  default:
-    return current
-  }
-})
-
-s.subscribe(() => L('store update', s.getState()))
-
-socket.logger = (k, m, p) => { return /heartbeat|phx/.test(m) ? null : L(k, m, p) }
-socket.connect()
-
-let ch = socket.channel('time', { id: GUID })
-
-ch.on('set', m => s.dispatch({ type: 'SET', ...m}))
-
-ch.on('msg', L)
-
-ch.join()
-  .receive('ok', r => { console.log('joined!', r) })
-  .receive('error', r => { console.log('error joining!', r) })
-
-// setInterval(() => {
-//   console.log('sending ping')
-//   ch.push('new_msg', { body: Math.floor(Math.random()+0.5)})
-// }, 1000);
+render((
+  <Router history={history}>
+    <Route path="/" component={Root}>
+      <Route path="about" component={About} />
+      <Route path="about/:userID" component={About} />
+      <Route path='home' component={Home} />
+    </Route>
+  </Router>
+), _$('app'));

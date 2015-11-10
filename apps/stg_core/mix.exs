@@ -30,6 +30,7 @@ defmodule Core.Mixfile do
       {:ja_serializer, "~> 0.4.0"},
       {:gproc, "~> 0.5.0"},
       {:beaker, "~> 1.1"},
+      {:hex_math, "~> 0.0.2"},
     ]
   end
 
