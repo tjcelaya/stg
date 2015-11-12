@@ -1,9 +1,18 @@
 {
+  "//": [
+    "a value of UNLICENSED in the license field indicates a desire to keep the package private",
+    "the Unlicense is a fully permissive license, which is actually the complete opposite",
+    {
+      "browserify": {
+        "insertGlobals": true
+      }
+    }
+  ],
   "repository": {},
   "scripts": {
     "build:deps:js": "browserify -r react -r react-dom > priv/static/js/react.js",
-    "build:js": "browserify -t babelify priv/static/js/app.js -o priv/static/js/app.dist.js",
-    "watch:js": "watchify   -t babelify priv/static/js/app.js -o priv/static/js/app.dist.js",
+    "build:js": "browserify -d -t babelify priv/static/js/app.js -o priv/static/js/app.dist.js",
+    "watch:js": "watchify   -d -t babelify priv/static/js/app.js -o priv/static/js/app.dist.js",
     "build:css": "echo nothingyet",
     "watch:css": "echo nothingyet",
     "build": "npm run build:js && npm run build:css",
@@ -33,13 +42,15 @@
     "react-art": "^0.14.0",
     "react-dom": "^0.14.0",
     "react-mixin": "^2.0.2",
+    "react-redux": "^4.0.0",
     "react-router": "^1.0.0",
     "react-tap-event-plugin": "^0.2.1",
-    "reflux": "^0.3.0",
+    "redux": "^3.0.4",
+    "redux-devtools": "^2.1.5",
+    "redux-logger": "^2.0.4",
+    "redux-router": "^1.0.0-beta4",
+    "redux-thunk": "^1.0.0",
     "uglify": "^0.1.5",
     "watchify": "^3.5.0"
-  },
-  "browserify": {
-    "insertGlobals": true
   }
 }
