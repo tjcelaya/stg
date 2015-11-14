@@ -6,8 +6,6 @@ class About extends React.Component {
         this.displayName = 'About';
     }
     render() {
-      L('render About')
-      debugger;
       let { id } = this.props.params
       let { query } = this.props.location
       let age = query && query.showAge ? '33' : ''

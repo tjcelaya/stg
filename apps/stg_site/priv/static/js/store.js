@@ -16,7 +16,13 @@ import createLogger from 'redux-logger';
 
 
 const reducer = combineReducers({
-  router: routerStateReducer
+  router: routerStateReducer,
+  time: (state = '', action) => {
+    if (action.type === 'SET_TIME')
+      return action.now
+    else
+      return state
+  }
 });
 
 const store = compose(

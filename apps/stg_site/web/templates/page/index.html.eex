@@ -1,9 +1,3 @@
 <div>It is currently <span id='time'><%= inspect :erlang.timestamp %></span></div>
 
 <div id='app'></div>
-
-<!--
-<div ng-app='tiles'>
-  <div ui-view></div>
-</div>
- -->

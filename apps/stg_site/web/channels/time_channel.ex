@@ -6,7 +6,7 @@ defmodule Site.TimeChannel do
 
   defmodule Clients do
     use ExActor.GenServer, export: __MODULE__
-    @interval 1000
+    @interval 5000
     defstart start_link do
       :erlang.send_after @interval, self, :time
       initial_state HashSet.new
