@@ -5,18 +5,12 @@ import {
   applyMiddleware
 } from 'redux';
 
-import {
-  routerStateReducer,
-  reduxReactRouter,
-  pushState   // not needed due to createHistory?
-} from 'redux-router';
+import { routeReducer } from 'redux-simple-router';
 
-import { createHistory } from 'history';
 import createLogger from 'redux-logger';
 
-
 const reducer = combineReducers({
-  router: routerStateReducer,
+  routing: routeReducer,
   time: (state = '', action) => {
     if (action.type === 'SET_TIME')
       return action.now
@@ -26,7 +20,7 @@ const reducer = combineReducers({
 });
 
 const store = compose(
-  reduxReactRouter({ createHistory }),
+  // reduxReactRouter({ createHistory }),
   applyMiddleware(createLogger())
   // devTools()
 )(createStore)(reducer);

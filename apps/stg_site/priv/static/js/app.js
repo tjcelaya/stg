@@ -2,13 +2,17 @@ import { GUID } from './util'
 import React, { Component, PropTypes } from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-import { Route } from 'react-router'
-import { ReduxRouter } from 'redux-router'
+import { Router, Route } from 'react-router'
+import { syncReduxAndRouter } from 'redux-simple-router'
 
-import store from './store'
+import store from './store'; window.store = store;
 import socket from './socket'
 import Root from './components/root'
 import About from './components/about'
+
+let history = require('history/lib/createBrowserHistory')();
+
+syncReduxAndRouter(history, store);
 
 let ch = socket.channel('time', { id: GUID })
 ch.on('set', (m) => {
@@ -20,7 +24,7 @@ ch.join()
 
 render((
   <Provider store={store}>
-    <ReduxRouter>
+    <Router>
       <Route path='/' component={Root}>
         <Route path='about(/:id)' component={About} />
         {/*
@@ -30,6 +34,6 @@ render((
         </Route>
         */}
       </Route>
-    </ReduxRouter>
+    </Router>
   </Provider>
 ), _$('app'));

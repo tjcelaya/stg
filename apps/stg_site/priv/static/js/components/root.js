@@ -4,14 +4,14 @@ import { Link } from 'react-router';
 
 import { MenuItem, LeftNav, Mixins, Styles } from 'material-ui';
 
-@connect((state) => ({}))
+@connect((state) => ({ time: state.time }))
 class Root extends Component {
   render() {
-      debugger;
+    // debugger
     return (
       <div>
         <LeftNav ref="leftNav">
-          <MenuItem index='0'>{this.props.now}</MenuItem>
+          <MenuItem index='0'>{this.props.time}</MenuItem>
           <MenuItem index='1'><Link to='/' activeClassName='active'>Root</Link></MenuItem>
           <MenuItem index='2'><Link to='/about' activeClassName='active'>About</Link></MenuItem>
         </LeftNav>
