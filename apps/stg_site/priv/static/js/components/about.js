@@ -7,13 +7,14 @@ class About extends React.Component {
     }
     render() {
       L('render About')
-      let { userID } = this.props.params
+      debugger;
+      let { id } = this.props.params
       let { query } = this.props.location
       let age = query && query.showAge ? '33' : ''
 
       return (
         <div className="User">
-          <h1>User id: {userID}</h1>
+          <h1>User id: {id}</h1>
           {age}
         </div>
       )

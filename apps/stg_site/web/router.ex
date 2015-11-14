@@ -16,7 +16,8 @@ defmodule Site.Router do
   scope "/", Site do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    # * in routes must be followed by (_?)a-z+
+    get "/*_path", PageController, :index
   end
 
   # Other scopes may use custom stacks.
