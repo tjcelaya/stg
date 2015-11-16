@@ -15,7 +15,11 @@ class About extends Component {
       // let query = this.props.location.query
       // let aboutTime = this.props.thetime
       //
-      let { params: { id }, location: { query }, thetime: aboutTime } = this.props
+      let {
+        params: { id },
+        location: { query },
+        thetime: aboutTime
+      } = this.props
       let age = query && query.showAge ? '33' : ''
 
       return (

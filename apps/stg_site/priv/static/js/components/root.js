@@ -16,9 +16,18 @@ class Root extends Component {
       <div>
         <LeftNav ref="leftNav">
           <MenuItem index='0'>{this.props.time}</MenuItem>
-          <MenuItem index='1'><Link to='/' activeClassName='active'>Root</Link></MenuItem>
-          <MenuItem index='2'><Link to='/about' activeClassName='active'>About</Link></MenuItem>
-          <MenuItem index='2'><Link to='/about/12' activeClassName='active'>About 12</Link></MenuItem>
+          <MenuItem index='1'>
+            <Link to='/' activeClassName='active'>Root</Link>
+          </MenuItem>
+          <MenuItem index='2'>
+            <Link to='/about' activeClassName='active'>About</Link>
+          </MenuItem>
+          <MenuItem index='2'>
+            <Link to='/about/12' activeClassName='active'>About 12</Link>
+          </MenuItem>
+          <MenuItem index='2'>
+            <Link to='/map' activeClassName='active'>Map</Link>
+          </MenuItem>
         </LeftNav>
         <div>{this.props.children || <h2>Nothing yet</h2>}</div>
       </div>
