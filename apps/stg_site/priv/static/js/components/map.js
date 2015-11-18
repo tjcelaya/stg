@@ -45,7 +45,7 @@ class Tile extends Component {
     return (
       <Shape
         d={hexPath}
-        fill='#ff0000'
+        fill='#ccc'
         stroke='#000'
         strokeWidth='1'
         transform={(new Transform).translate(
@@ -59,50 +59,50 @@ class Tile extends Component {
 
 // stateless components can be defined as functions
 class Map extends Component {
-  constructor(props) { super(props);
-    this.state = { x: 0, y: 0 }
-    this.boundMouseDownHandler = this.handleMouseDown.bind(this)
-    this.boundMouseUpHandler = this.handleMouseUp.bind(this)
+  static coords = {
+    x: null,
+    y: null,
+    dragging: false
+  }
+  constructor(props) {
+    super(props);
+    this.state = { x: 0, y: 0, dragging: false }
   }
   componentDidMount() {
-      document.addEventListener('mousemove', this.handleMouseMove, false);
+      document.addEventListener('mousemove', this.handleMouseMove.bind(this), false);
   }
   componentWillUnmount() {
-      document.removeEventListener('mousemove', this.handleMouseMove, false);
+      document.removeEventListener('mousemove', this.handleMouseMove.bind(this), false);
   }
   handleMouseDown(e) {
-    L('mouse down')
-    this.setState({
+    L('mouse down', e.pageX, e.pageY)
+    Map.coords = {
       dragging: true,
-      coords: {
-        x: e.pageX,
-        y: e.pageY
-      }
-    })
+      x: e.pageX,
+      y: e.pageY
+    }
   }
   handleMouseUp(e) {
     L('mouse up')
-    this.setState({ dragging: false });
+    Map.coords.dragging = false
   }
-  // handleMouseMove(e) {
-  //   if (!this.dragging) return;
-  //     e.preventDefault();
-  //   //Get mouse change differential
-  //   var xDiff = this.coords.x - e.pageX,
-  //       yDiff = this.coords.y - e.pageY;
-  //   //Update to our new coordinates
-  //       this.coords.x = e.pageX;
-  //       this.coords.y = e.pageY;
-  //   //Adjust our x,y based upon the x/y diff from before
-  //   var x = this.state.x - xDiff,
-  //       y = this.state.y - yDiff;
-  //   //Re-render
-  //   this.setState(this.state);
-  // }
+  handleMouseMove(e) {
+    if (!Map.coords.dragging) return;
+    e.preventDefault();
+    //Get mouse change differential
+    var xDiff = Map.coords.x - e.pageX
+    var yDiff = Map.coords.y - e.pageY
+    //Update to our new coordinates
+    Map.coords.x = e.pageX;
+    Map.coords.y = e.pageY;
+    //Adjust our x,y based upon the x/y diff from before
+    console.clear();
+    L('move', Map.coords.dragging, this.state.x - xDiff, this.state.y - yDiff, xDiff, yDiff);
+    this.setState({ ...this.state, x: this.state.x - xDiff, y: this.state.y - yDiff });
+  }
 
 
   render() {
-    // debugger;
       let t =  _(5)
        .range()
        .map((x) => _(5).times(() => x).zip(_.range(5)).value())
@@ -110,11 +110,13 @@ class Map extends Component {
        .map((coords) => { let c = {x: coords[0], y: coords[1]}; return <Tile {...c} />; })
        .value()
 
+          // onMouseMove={this.handleMouseMove}
+          // onClick={this.handleClick.bind(this)}
+
     return (
       <div
-          onMouseDown={this.boundMouseDownHandler}
-          onMouseUp={this.boundMouseUpHandler}
-          onClick={this.handleClick}
+          onMouseDown={this.handleMouseDown.bind(this)}
+          onMouseUp={this.handleMouseUp.bind(this)}
         >
         <h1>herro: {this.state.dragging ? 't' : 'f'}</h1>
         <Surface
