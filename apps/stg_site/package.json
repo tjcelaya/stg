@@ -12,7 +12,7 @@
   "scripts": {
     "build:deps:js": "browserify -r react -r react-dom > priv/static/js/react.js",
     "build:js": "browserify -d -t babelify priv/static/js/app.js -o priv/static/js/app.dist.js",
-    "watch:js": "watchify -v -d -t babelify priv/static/js/app.js -o priv/static/js/app.dist.js",
+    "watch:js": "watchify -v -d -t babelify priv/static/js/app.js -o 'exorcist priv/static/js/app.js.map > priv/static/js/app.dist.js'",
     "build:css": "echo nothingyet",
     "watch:css": "echo nothingyet",
     "build": "npm run build:js && npm run build:css",
