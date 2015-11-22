@@ -67,37 +67,50 @@ class Map extends Component {
   constructor(props) {
     super(props);
     this.state = { x: 0, y: 0, dragging: false }
+    this.boundTouchMove = this.handleTouchMove.bind(this)
   }
   componentDidMount() {
-      document.addEventListener('mousemove', this.handleMouseMove.bind(this), false);
   }
   componentWillUnmount() {
-      document.removeEventListener('mousemove', this.handleMouseMove.bind(this), false);
   }
-  handleMouseDown(e) {
-    L('mouse down', e.pageX, e.pageY)
+  handleTouchDown(e) {
+    L('Touch down', e.pageX, e.pageY)
+    document.addEventListener('touchmove', this.boundTouchMove, false);
+    document.addEventListener('mousemove', this.boundTouchMove, false);
+
+    window.theTouchDown = e
     Map.coords = {
       dragging: true,
-      x: e.pageX,
-      y: e.pageY
+      x: ('touches' in e) ? e.touches[0].pageX : e.pageX,
+      y: ('touches' in e) ? e.touches[0].pageY : e.pageY,
     }
   }
-  handleMouseUp(e) {
-    L('mouse up')
+  handleTouchUp(e) {
+    L('Touch up')
+    document.removeEventListener('touchmove', this.boundTouchMove, false);
+    document.removeEventListener('mousemove', this.boundTouchMove, false);
     Map.coords.dragging = false
   }
-  handleMouseMove(e) {
+  handleTouchMove(e) {
     if (!Map.coords.dragging) return;
     e.preventDefault();
-    //Get mouse change differential
+    //Get Touch change differential
     var xDiff = Map.coords.x - e.pageX
     var yDiff = Map.coords.y - e.pageY
     //Update to our new coordinates
-    Map.coords.x = e.pageX;
-    Map.coords.y = e.pageY;
+    if ('pageX' in e) {
+      L('pageX!')
+      Map.coords.x = e.pageX;
+      Map.coords.y = e.pageY;
+    } else if ('touches' in e) {
+      L('touches!')
+      Map.coords.x = e.touches[0].pageX
+      Map.coords.y = e.touches[0].pageY
+    }
+    window.theE = e
     //Adjust our x,y based upon the x/y diff from before
-    console.clear();
-    L('move', Map.coords.dragging, this.state.x - xDiff, this.state.y - yDiff, xDiff, yDiff);
+    // console.clear();
+    L('move', Map.coords.dragging, this.state.x, this.state.y, xDiff, yDiff);
     this.setState({ ...this.state, x: this.state.x - xDiff, y: this.state.y - yDiff });
   }
 
@@ -110,17 +123,19 @@ class Map extends Component {
        .map((coords) => { let c = {x: coords[0], y: coords[1]}; return <Tile {...c} />; })
        .value()
 
-          // onMouseMove={this.handleMouseMove}
+          // onTouchMove={this.handleTouchMove}
           // onClick={this.handleClick.bind(this)}
 
     return (
       <div
-          onMouseDown={this.handleMouseDown.bind(this)}
-          onMouseUp={this.handleMouseUp.bind(this)}
+          onTouchStart={this.handleTouchDown.bind(this)}
+          onMouseDown={this.handleTouchDown.bind(this)}
+          onTouchEnd={this.handleTouchUp.bind(this)}
+          onMouseUp={this.handleTouchUp.bind(this)}
         >
         <h1>herro: {this.state.dragging ? 't' : 'f'}</h1>
         <Surface
-            width={500}
+            width={250}
             height={500}
             style={{border: '1px solid red'}}>
           <Group x={this.state.x} y={this.state.y}>{t}</Group>

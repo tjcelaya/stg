@@ -15,13 +15,16 @@ let history = require('history/lib/createBrowserHistory')();
 
 syncReduxAndRouter(history, store);
 
-let ch = socket.channel('time', { id: GUID })
-ch.on('set', (m) => {
-  store.dispatch({ type: 'SET_TIME', ...m })
-})
+// let ch = socket.channel('time', { id: GUID })
+// ch.on('set', (m) => {
+//   store.dispatch({ type: 'SET_TIME', ...m })
+// })
 // ch.join()
 //   .receive('ok', r => { console.log('joined!', r) })
 //   .receive('error', r => { console.log('error joining!', r) })
+if (GUID === false) {
+  store.dispatch({ type: 'SET_MESSAGE', message: 'NO LOCALSTORAGE' })
+}
 
 render((
   <Provider store={store}>
