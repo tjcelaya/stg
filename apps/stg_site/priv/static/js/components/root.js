@@ -10,7 +10,6 @@ import StaticContainer from 'react-static-container'
 // @connect(({ time }) => ({ time }))
 // but we've chosen to pull props out of state to be explicit
 
-@connect(_.identity)
 class RouterTransitionGroup extends React.Component {
   constructor(props, context) {
     super(props, context)
@@ -45,8 +44,9 @@ class RouterTransitionGroup extends React.Component {
   }
 }
 
+RouterTransitionGroup = connect(_.identity)(RouterTransitionGroup)
+
 // @connect(state => ({ time: state.time }))
-@connect(_.identity)
 class Root extends Component {
   _handleMenuToggle() {
     store.dispatch({ type: 'MENU_TOGGLE', menuOpen: !this.props.menuOpen })
@@ -88,5 +88,6 @@ class Root extends Component {
     )
   }
 }
+Root = connect(_.identity)(Root)
 
 export default Root;

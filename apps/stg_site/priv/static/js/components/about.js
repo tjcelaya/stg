@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 
 // as an example, we can connect this non-root component to the redux store and have it
 // consume the store's time with a different value
-@connect((state) => ({ thetime: state.time }))
 class About extends Component {
     constructor(props) {
         super(props);
@@ -30,5 +29,7 @@ class About extends Component {
       )
     }
 }
+About = connect((state) => ({ thetime: state.time }))(About)
+
 
 export default About;

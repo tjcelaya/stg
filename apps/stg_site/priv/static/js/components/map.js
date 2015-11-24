@@ -38,9 +38,7 @@ let hexPath = makeHexPath(hexWidth, {x: 0, y: 0});
 */
 class Tile extends Component {
   static defaultProps = { x: 0, y: 0}
-  handleClick() {
-    L('props not available here, need state')
-  }
+  handleClick() {}
   render() {
     return (
       <Shape
@@ -62,11 +60,12 @@ class Map extends Component {
   static coords = {
     x: null,
     y: null,
+    scale: 1,
     dragging: false
   }
   constructor(props) {
     super(props);
-    this.state = { x: 0, y: 0, dragging: false }
+    this.state = { x: 0, y: 0, scale: 1 }
     this.boundTouchMove = this.handleTouchMove.bind(this)
   }
   componentDidMount() {
@@ -99,29 +98,31 @@ class Map extends Component {
     var yDiff = Map.coords.y - e.pageY
     //Update to our new coordinates
     if ('pageX' in e) {
-      L('pageX!')
       Map.coords.x = e.pageX;
       Map.coords.y = e.pageY;
-    } else if ('touches' in e) {
-      L('touches!')
+    } else if ('touches' in e && e.touches.length === 1) {
       Map.coords.x = e.touches[0].pageX
       Map.coords.y = e.touches[0].pageY
     }
     window.theE = e
     //Adjust our x,y based upon the x/y diff from before
     // console.clear();
-    L('move', Map.coords.dragging, this.state.x, this.state.y, xDiff, yDiff);
-    this.setState({ ...this.state, x: this.state.x - xDiff, y: this.state.y - yDiff });
+    // L('move', Map.coords.dragging, this.state.x, this.state.y, xDiff, yDiff);
+    this.setState({ x: this.state.x - xDiff, y: this.state.y - yDiff }); // setState merges
   }
-
-
+  handleWheel(e) {
+    const newScale = this.state.scale * (e.deltaY <= 0 ? 1.1 : 0.9)
+    L(`scaling with ${e.deltaY} from ${this.state.scale} to ${newScale}`)
+    this.setState({ scale: newScale });
+  }
   render() {
-      let t =  _(5)
-       .range()
-       .map((x) => _(5).times(() => x).zip(_.range(5)).value())
-       .flatten()
-       .map((coords) => { let c = {x: coords[0], y: coords[1]}; return <Tile {...c} />; })
-       .value()
+    L('r'); let testGridSize = 20
+    let t =  _(testGridSize)
+     .range()
+     .map((x) => _(testGridSize).times(() => x).zip(_.range(testGridSize)).value())
+     .flatten()
+     .map((coords) => { let c = {x: coords[0], y: coords[1]}; return <Tile {...c} />; })
+     .value()
 
           // onTouchMove={this.handleTouchMove}
           // onClick={this.handleClick.bind(this)}
@@ -132,13 +133,14 @@ class Map extends Component {
           onMouseDown={this.handleTouchDown.bind(this)}
           onTouchEnd={this.handleTouchUp.bind(this)}
           onMouseUp={this.handleTouchUp.bind(this)}
+          onWheel={this.handleWheel.bind(this)}
         >
-        <h1>herro: {this.state.dragging ? 't' : 'f'}</h1>
+        <h1>herro: {Map.coords.dragging ? 't' : 'f'}</h1>
         <Surface
             width={250}
             height={500}
             style={{border: '1px solid red'}}>
-          <Group x={this.state.x} y={this.state.y}>{t}</Group>
+          <Group x={this.state.x} y={this.state.y} scale={this.state.scale}>{t}</Group>
         </Surface>
       </div>
     )
