@@ -32,9 +32,9 @@ let hexWidth = 40;
 let hexPath = makeHexPath(hexWidth, {x: 0, y: 0});
 
 /* TODO: investigate performance of:
-1. wrapping every tile in <Group x= y=> for offset
-2. calculating x & y for all tiles independently
-3. keeping a Transform object in the Tile's state
+  1. wrapping every tile in <Group x= y=> for offset
+  2. calculating x & y for all tiles independently
+  3. keeping a Transform object in the Tile's state
 */
 class Tile extends Component {
   static defaultProps = { x: 0, y: 0}
@@ -55,7 +55,6 @@ class Tile extends Component {
   }
 }
 
-// stateless components can be defined as functions
 class Map extends Component {
   static coords = {
     x: null,
@@ -147,5 +146,80 @@ class Map extends Component {
   }
 }
 
-export default Map;
+import React3 from 'react-three-renderer'
+import THREE from 'three'
+
+class TMap extends Component {
+  // stolen from https://github.com/toxicFork/react-three-renderer-example
+  constructor(props, context) {
+    super(props, context);
+
+    this.cameraPosition = new THREE.Vector3(0, 2, 5);
+
+    this.state = {
+      cubeRotation: new THREE.Euler(),
+    };
+
+    this._onAnimate = () => {
+      this.setState({
+        cubeRotation: new THREE.Euler(
+          this.state.cubeRotation.x + 0.01,
+          this.state.cubeRotation.y + 0.01,
+          0
+        ),
+      });
+    };
+  }
+
+  render() {
+    const width = 500;
+    const height = 500;
+
+    return (
+      <div>
+        <h1>THREE</h1>
+        <React3
+              mainCamera="camera"
+              width={width}
+              height={height}
+              onAnimate={this._onAnimate}
+              >
+          <scene>
+            <perspectiveCamera
+              name="camera"
+              fov={75}
+              aspect={width / height}
+              near={0.1}
+              far={1000}
+
+              position={this.cameraPosition}/>
+            <pointLight hex={0xffffff} intensity={1} distance={0} position={new THREE.Vector3( 0, 20, 0 )}/>
+            <pointLight hex={0xffffff} intensity={1} distance={0} position={new THREE.Vector3( 10, 20, 10 )}/>
+            <pointLight hex={0xffffff} intensity={1} distance={0} position={new THREE.Vector3( -10, -20, -10 )}/>
+            <mesh
+              rotation={this.state.cubeRotation}>
+              <cylinderGeometry
+                radiusTop={1}
+                radiusBottom={1}
+                height={0.5}
+                dynamic={true}
+                radialSegments={6}/>
+              <meshPhongMaterial
+                color={0x00ff00}
+              />
+            </mesh>
+          </scene>
+        </React3>
+      </div>
+    )
+  }
+}
+
+export class MapContainer extends Component {
+  render() {
+    return (
+      <TMap/>
+    )
+  }
+}
 

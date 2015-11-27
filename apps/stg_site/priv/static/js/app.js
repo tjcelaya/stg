@@ -9,7 +9,7 @@ import store from './store'; window.store = store;
 import socket from './socket'
 import Root from './components/root'
 import About from './components/about'
-import Map from './components/map'
+import { MapContainer, Map } from './components/map'
 
 let history = require('history/lib/createBrowserHistory')();
 
@@ -31,7 +31,7 @@ render((
     <Router>
       <Route path='/' component={Root}>
         <Route path='about(/:id)' component={About} />
-        <Route path='map' component={Map} />
+        <Route path='map' component={MapContainer} />
         {/*
         <Route path='parent' component={Parent}>
           <Route path='child' component={Child} />

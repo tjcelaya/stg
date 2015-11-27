@@ -28,7 +28,8 @@ class RouterTransitionGroup extends React.Component {
           key={this.props.routing.segments[0]}
           style={{position: 'relative'}}
         >
-          <div style={{position: 'absolute'}}>
+          <div style={{position: 'absolute'}} className='full-width'>
+            {/*absolute positioning loses default*/}
             {children}
           </div>
         </div>
@@ -55,7 +56,12 @@ class Root extends Component {
     window.rootProps = this.props
     return (
       <div>
-        <LeftNav ref="leftNav" docked={this.props.menuOpen} disableSwipeToOpen={true}>
+        <LeftNav
+            ref="leftNav"
+            docked={this.props.menuOpen}
+            disableSwipeToOpen={true}
+            style={{paddingTop: '2em'}}
+            >
           <MenuItem index={0}>{this.props.time}</MenuItem>
           <MenuItem index={1}>
             <Link to='/' activeClassName='active'>Root</Link>
@@ -71,9 +77,9 @@ class Root extends Component {
           </MenuItem>
         </LeftNav>
         <button
-            onClick={this._handleMenuToggle.bind(this)}
-            style={{position: 'absolute', top: '0px', left: '0px', zIndex: '9999'}}
-        >toggle menu</button>
+              onClick={this._handleMenuToggle.bind(this)}
+              className='menu-toggle button-primary'
+            >toggle menu</button>
         <div className='alert'>Path: {this.props.routing.segments.join(' | ')}</div>
         <div className='alert'>Message: {this.props.message}</div>
         <RouterTransitionGroup

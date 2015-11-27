@@ -12,4 +12,3 @@ export let GUID = false
 try {
   GUID = localStorage['GUID'] || (localStorage['GUID'] = makeGUID())
 } catch (e) { }
-
