@@ -37,7 +37,7 @@ let hexPath = makeHexPath(hexWidth, {x: 0, y: 0});
   3. keeping a Transform object in the Tile's state
 */
 class Tile extends Component {
-  static defaultProps = { x: 0, y: 0}
+  static defaultProps = { x: 0, y: 0 }
   handleClick() {}
   render() {
     return (
@@ -149,6 +149,39 @@ class Map extends Component {
 import React3 from 'react-three-renderer'
 import THREE from 'three'
 
+class TTile extends Component {
+  static defaultProps = { x: 0, y: 0, height: 0.5 }
+  render() {
+    return <mesh
+        // rotation={this.state.cubeRotation}
+        position={new THREE.Vector3(this.props.x * Math.sqrt(3) , 0, this.props.y)}>
+        <cylinderGeometry
+          radiusTop={1}
+          radiusBottom={1}
+          height={0.5}
+          // dynamic={true}
+          radialSegments={6}/>
+        <meshPhongMaterial
+          color={0x00ff00}/>
+      </mesh>
+  }
+}
+
+let debugAxis = ((axisLength) => {
+  let lineFromOriginTo = (v, color = 0xffffff) => {
+    return <line>
+      <geometry vertices={[new THREE.Vector3(0,0,0), v]} />
+      <lineBasicMaterial color={color} linewidth={1} />
+    </line>
+  }
+
+  return [
+    lineFromOriginTo(new THREE.Vector3(axisLength,0,0), 0xff0000),
+    lineFromOriginTo(new THREE.Vector3(0,axisLength,0), 0x00ff00),
+    lineFromOriginTo(new THREE.Vector3(0,0,axisLength), 0x0000ff),
+  ]
+})(2)
+
 class TMap extends Component {
   // stolen from https://github.com/toxicFork/react-three-renderer-example
   constructor(props, context) {
@@ -172,8 +205,8 @@ class TMap extends Component {
   }
 
   render() {
-    const width = 500;
-    const height = 500;
+    const width = window.innerWidth
+    const height = 500
 
     return (
       <div>
@@ -182,7 +215,8 @@ class TMap extends Component {
               mainCamera="camera"
               width={width}
               height={height}
-              onAnimate={this._onAnimate}
+              clearColor={0xffffff}
+              // onAnimate={this._onAnimate}
               >
           <scene>
             <perspectiveCamera
@@ -196,18 +230,10 @@ class TMap extends Component {
             <pointLight hex={0xffffff} intensity={1} distance={0} position={new THREE.Vector3( 0, 20, 0 )}/>
             <pointLight hex={0xffffff} intensity={1} distance={0} position={new THREE.Vector3( 10, 20, 10 )}/>
             <pointLight hex={0xffffff} intensity={1} distance={0} position={new THREE.Vector3( -10, -20, -10 )}/>
-            <mesh
-              rotation={this.state.cubeRotation}>
-              <cylinderGeometry
-                radiusTop={1}
-                radiusBottom={1}
-                height={0.5}
-                dynamic={true}
-                radialSegments={6}/>
-              <meshPhongMaterial
-                color={0x00ff00}
-              />
-            </mesh>
+            {debugAxis}
+
+            <TTile x={0} y={0}/>
+            <TTile x={1} y={0}/>
           </scene>
         </React3>
       </div>

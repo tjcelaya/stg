@@ -10,12 +10,10 @@
     <title>Hello Phoenix!</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.dist.css") %>">
   </head>
-  <body>
-    <div class="container" role="main">
+  <body role="main">
       <!-- <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p> -->
       <!-- <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p> -->
       <%= @inner %>
-    </div>
     <script src="<%= static_path(@conn, "/js/react.js") %>"></script>
     <script src="<%= static_path(@conn, "/js/app.dist.js") %>"></script>
   </body>

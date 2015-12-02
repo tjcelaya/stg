@@ -22,7 +22,7 @@ class About extends Component {
       let age = query && query.showAge ? '33' : ''
 
       return (
-        <div className="User">
+        <div className="User container">
           <h1>User id: {id}</h1>
           {aboutTime}
         </div>

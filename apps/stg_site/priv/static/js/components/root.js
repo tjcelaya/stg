@@ -60,8 +60,7 @@ class Root extends Component {
             ref="leftNav"
             docked={this.props.menuOpen}
             disableSwipeToOpen={true}
-            style={{paddingTop: '2em'}}
-            >
+            style={{paddingTop: '2em'}}>
           <MenuItem index={0}>{this.props.time}</MenuItem>
           <MenuItem index={1}>
             <Link to='/' activeClassName='active'>Root</Link>
@@ -78,10 +77,13 @@ class Root extends Component {
         </LeftNav>
         <button
               onClick={this._handleMenuToggle.bind(this)}
-              className='menu-toggle button-primary'
-            >toggle menu</button>
-        <div className='alert'>Path: {this.props.routing.segments.join(' | ')}</div>
-        <div className='alert'>Message: {this.props.message}</div>
+              className='menu-toggle button-primary'>
+          toggle menu
+        </button>
+        <div className="container">
+          <div className='alert'>Path: {this.props.routing.segments.join(' | ')}</div>
+          <div className='alert'>Message: {this.props.message}</div>
+        </div>
         <RouterTransitionGroup
           component="div"
           transitionName="example"
