@@ -1,59 +1,13 @@
 import React, { Component } from 'react'
-import {
-  Surface,
-  Group,
-  Transform,
-  Shape,
-  Path
-} from 'react-art'
+import MouseInput from '../MouseInput'
 
-function makeHexPath(size, {x: cX, y: cY}) {
-  var path = new Path();
-  var point = 0;
-  var angle = null;
-  var x = null;
-  var y = null;
-  var oneThirdPI = 2 * Math.PI / 6;
-
-  while (point <= 6) {
-    angle = oneThirdPI * (point + 0.5);
-    x = cX + size * Math.cos(angle);
-    y = cY + size * Math.sin(angle);
-
-    path.lineTo(x, y);
-
-    point = point + 1;
-  }
-
-  return path;
-}
-
-let hexWidth = 40;
-let hexPath = makeHexPath(hexWidth, {x: 0, y: 0});
+Object.values = _.values
 
 /* TODO: investigate performance of:
   1. wrapping every tile in <Group x= y=> for offset
   2. calculating x & y for all tiles independently
   3. keeping a Transform object in the Tile's state
 */
-class Tile extends Component {
-  static defaultProps = { x: 0, y: 0 }
-  handleClick() {}
-  render() {
-    return (
-      <Shape
-        d={hexPath}
-        fill='#ccc'
-        stroke='#000'
-        strokeWidth='1'
-        transform={(new Transform).translate(
-          hexWidth * 2 * this.props.x * (Math.sqrt(3) * 0.5) + (this.props.y & 1 ? hexWidth * Math.sqrt(3) * 0.5: 0),
-          hexWidth * 2 * this.props.y * 0.75)
-        }
-        onClick={this.handleClick}/>
-    )
-  }
-}
 
 class Map extends Component {
   static coords = {
@@ -148,6 +102,8 @@ class Map extends Component {
 
 import React3 from 'react-three-renderer'
 import THREE from 'three'
+import { ORIGIN } from '../util'
+window.THREE = THREE
 
 class TTile extends Component {
   static defaultProps = { x: 0, y: 0, height: 0.5 }
@@ -159,10 +115,11 @@ class TTile extends Component {
           radiusTop={1}
           radiusBottom={1}
           height={0.5}
-          // dynamic={true}
+          onMouseDown={() => console.log(this.x, this.y)}
           radialSegments={6}/>
         <meshPhongMaterial
-          color={0x00ff00}/>
+          color={0x00ff00}
+          side={THREE.DoubleSide}/>
       </mesh>
   }
 }
@@ -170,7 +127,7 @@ class TTile extends Component {
 let debugAxis = ((axisLength) => {
   let lineFromOriginTo = (v, color = 0xffffff) => {
     return <line>
-      <geometry vertices={[new THREE.Vector3(0,0,0), v]} />
+      <geometry vertices={[ORIGIN, v]} />
       <lineBasicMaterial color={color} linewidth={1} />
     </line>
   }
@@ -187,7 +144,7 @@ class TMap extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this.cameraPosition = new THREE.Vector3(0, 2, 5);
+    this.cameraPosition = new THREE.Vector3(0, 5, 10);
 
     this.state = {
       cubeRotation: new THREE.Euler(),
@@ -218,13 +175,20 @@ class TMap extends Component {
               clearColor={0xffffff}
               // onAnimate={this._onAnimate}
               >
-          <scene>
+          <module
+            ref="mouseInput"
+            descriptor={MouseInput}/>
+          <scene
+              ref='scene'
+              fog={new THREE.Fog(0xffffff, 0.1)}
+              >
             <perspectiveCamera
               name="camera"
               fov={75}
               aspect={width / height}
               near={0.1}
               far={1000}
+              lookAt={ORIGIN}
 
               position={this.cameraPosition}/>
             <pointLight hex={0xffffff} intensity={1} distance={0} position={new THREE.Vector3( 0, 20, 0 )}/>
