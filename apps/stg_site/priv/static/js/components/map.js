@@ -1,7 +1,48 @@
 import React, { Component } from 'react'
 import MouseInput from '../MouseInput'
+import React3 from 'react-three-renderer'
+import THREE from 'three'
+import { ORIGIN, SQRT3 } from '../util'
 
-Object.values = _.values
+
+class TTile extends Component {
+  static defaultProps = { x: 0, y: 0, height: 0.5 }
+
+  constructor(props) {
+    super(props)
+    this.boundMouseDown = this._onMouseDown.bind(this)
+  }
+
+  _onMouseDown(e, intersection) {
+    e.preventDefault();
+    this.props.onMouseDown
+  }
+
+  componentDidMount() {
+    this.props.meshes.push(this.refs.mesh)
+  }
+
+  render() {
+    return <mesh
+        ref='mesh'
+        onMouseDown={() => console.log(this.props.x, this.props.y)}
+        position={new THREE.Vector3(
+            this.props.x * SQRT3 + (this.props.y & 1 ? SQRT3/2 : 0) ,
+            0,
+            this.props.y * 1.5
+          )}>
+        <cylinderGeometry
+          radiusTop={0.9}
+          radiusBottom={0.9}
+          height={0.5}
+          radialSegments={6}/>
+        <meshPhongMaterial
+          color={0xff0000}
+          side={THREE.DoubleSide}/>
+      </mesh>
+  }
+}
+
 
 /* TODO: investigate performance of:
   1. wrapping every tile in <Group x= y=> for offset
@@ -57,7 +98,6 @@ class Map extends Component {
       Map.coords.x = e.touches[0].pageX
       Map.coords.y = e.touches[0].pageY
     }
-    window.theE = e
     //Adjust our x,y based upon the x/y diff from before
     // console.clear();
     // L('move', Map.coords.dragging, this.state.x, this.state.y, xDiff, yDiff);
@@ -69,13 +109,7 @@ class Map extends Component {
     this.setState({ scale: newScale });
   }
   render() {
-    L('r'); let testGridSize = 20
-    let t =  _(testGridSize)
-     .range()
-     .map((x) => _(testGridSize).times(() => x).zip(_.range(testGridSize)).value())
-     .flatten()
-     .map((coords) => { let c = {x: coords[0], y: coords[1]}; return <Tile {...c} />; })
-     .value()
+
 
           // onTouchMove={this.handleTouchMove}
           // onClick={this.handleClick.bind(this)}
@@ -100,30 +134,6 @@ class Map extends Component {
   }
 }
 
-import React3 from 'react-three-renderer'
-import THREE from 'three'
-import { ORIGIN } from '../util'
-window.THREE = THREE
-
-class TTile extends Component {
-  static defaultProps = { x: 0, y: 0, height: 0.5 }
-  render() {
-    return <mesh
-        // rotation={this.state.cubeRotation}
-        position={new THREE.Vector3(this.props.x * Math.sqrt(3) , 0, this.props.y)}>
-        <cylinderGeometry
-          radiusTop={1}
-          radiusBottom={1}
-          height={0.5}
-          onMouseDown={() => console.log(this.x, this.y)}
-          radialSegments={6}/>
-        <meshPhongMaterial
-          color={0x00ff00}
-          side={THREE.DoubleSide}/>
-      </mesh>
-  }
-}
-
 let debugAxis = ((axisLength) => {
   let lineFromOriginTo = (v, color = 0xffffff) => {
     return <line>
@@ -139,65 +149,140 @@ let debugAxis = ((axisLength) => {
   ]
 })(2)
 
+let t = null
+
 class TMap extends Component {
+  static coords = {
+    x: null,
+    y: null,
+    scale: 1,
+    dragging: false,
+  }
+
+  static meshes = []
+
   // stolen from https://github.com/toxicFork/react-three-renderer-example
   constructor(props, context) {
     super(props, context);
 
-    this.cameraPosition = new THREE.Vector3(0, 5, 10);
+    this.boundTouchMove = this.handleTouchMove.bind(this)
+    this.boundTouchStart = this.handleTouchStart.bind(this)
+    this.boundTouchEnd = this.handleTouchEnd.bind(this)
+    this.boundAnimate =  this.onAnimate.bind(this)
 
     this.state = {
-      cubeRotation: new THREE.Euler(),
+      cameraPosition: new THREE.Vector3(0, 5, 1),
+      mouseInput: null,
+      camera: null,
     };
 
-    this._onAnimate = () => {
-      this.setState({
-        cubeRotation: new THREE.Euler(
-          this.state.cubeRotation.x + 0.01,
-          this.state.cubeRotation.y + 0.01,
-          0
-        ),
-      });
-    };
+    let testGridSize = 20;
+    t =  _(testGridSize)
+     .range()
+     .map((x) => _(testGridSize).times(() => x).zip(_.range(testGridSize)).value())
+     .flatten()
+     .map((coords) => <TTile key={`x${coords[0]}y${coords[1]}`} x={coords[0]} y={coords[1]} k={`x${coords[0]}y${coords[1]}`} meshes={TMap.meshes} />)
+     .value()
+
+  }
+
+  handleTouchStart(e) {
+    L('Touch down', e.pageX, e.pageY)
+    document.addEventListener('touchmove', this.boundTouchMove, false);
+    document.addEventListener('mousemove', this.boundTouchMove, false);
+
+    window.theTouchStart = e
+    Map.coords = {
+      dragging: true,
+      x: ('touches' in e) ? e.touches[0].pageX : e.pageX,
+      y: ('touches' in e) ? e.touches[0].pageY : e.pageY,
+    }
+  }
+
+  handleTouchEnd(e) {
+    L('Touch up')
+    document.removeEventListener('touchmove', this.boundTouchMove, false);
+    document.removeEventListener('mousemove', this.boundTouchMove, false);
+    Map.coords.dragging = false
+  }
+
+  handleTouchMove(e) {
+    if (!TMap.coords.dragging) return;
+    e.preventDefault();
+    //Get Touch change differential
+    var xDiff = TMap.coords.x - e.pageX
+    var yDiff = TMap.coords.y - e.pageY
+    //Update to our new coordinates
+    if ('pageX' in e) {
+      TMap.coords.x = e.pageX;
+      TMap.coords.y = e.pageY;
+    } else if ('touches' in e && e.touches.length === 1) {
+      TMap.coords.x = e.touches[0].pageX
+      TMap.coords.y = e.touches[0].pageY
+    }
+    //Adjust our x,y based upon the x/y diff from before
+    // console.clear();
+    // L('move', TMap.coords.dragging, this.state.x, this.state.y, xDiff, yDiff);
+    this.setState({ x: this.state.x - xDiff, y: this.state.y - yDiff }); // setState merges
+  }
+
+  onAnimate(e) {
+    const {
+      mouseInput,
+      camera,
+      } = this.refs;
+
+    if (!mouseInput.isReady()) {
+      const {
+        scene,
+        container,
+        } = this.refs;
+
+      mouseInput.ready(scene, container, camera);
+      mouseInput.restrictIntersections(TMap.meshes);
+      mouseInput.setActive(false);
+    }
+
+    if (this.state.mouseInput !== mouseInput)
+      this.setState({ mouseInput })
+
+    if (this.state.camera !== camera)
+      this.setState({ camera })
   }
 
   render() {
     const width = window.innerWidth
-    const height = 500
+    const aspect = 2
+    const height = width / aspect
 
     return (
-      <div>
+      <div ref='container'>
         <h1>THREE</h1>
         <React3
               mainCamera="camera"
               width={width}
               height={height}
               clearColor={0xffffff}
-              // onAnimate={this._onAnimate}
+              onAnimate={this.boundAnimate}
               >
           <module
             ref="mouseInput"
             descriptor={MouseInput}/>
           <scene
               ref='scene'
-              fog={new THREE.Fog(0xffffff, 0.1)}
               >
             <perspectiveCamera
-              name="camera"
+              ref='camera'
+              name='camera'
               fov={75}
-              aspect={width / height}
+              aspect={aspect}
               near={0.1}
               far={1000}
               lookAt={ORIGIN}
-
-              position={this.cameraPosition}/>
-            <pointLight hex={0xffffff} intensity={1} distance={0} position={new THREE.Vector3( 0, 20, 0 )}/>
-            <pointLight hex={0xffffff} intensity={1} distance={0} position={new THREE.Vector3( 10, 20, 10 )}/>
-            <pointLight hex={0xffffff} intensity={1} distance={0} position={new THREE.Vector3( -10, -20, -10 )}/>
+              position={this.state.cameraPosition}/>
+            <pointLight intensity={1} distance={0} position={new THREE.Vector3( 0, 20, 0 )}/>
             {debugAxis}
-
-            <TTile x={0} y={0}/>
-            <TTile x={1} y={0}/>
+            {t}
           </scene>
         </React3>
       </div>
@@ -205,11 +290,5 @@ class TMap extends Component {
   }
 }
 
-export class MapContainer extends Component {
-  render() {
-    return (
-      <TMap/>
-    )
-  }
-}
 
+export default TMap

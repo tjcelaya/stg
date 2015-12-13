@@ -14,4 +14,7 @@ try {
 } catch (e) { }
 
 import THREE from 'three'
+window.THREE = THREE
 export const ORIGIN = new THREE.Vector3(0,0,0)
+export const SQRT3 = Math.sqrt(3)
+Object.values = _.values

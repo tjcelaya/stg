@@ -15,14 +15,14 @@ config :stg_site, Site.Endpoint,
   # watchers: [ npm: ["run", "watch"] ] # this should be run separately
 
 # Watch static and templates for browser reloading.
-config :stg_site, Site.Endpoint,
-  live_reload: [
-    patterns: [
-      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
-      ~r{web/views/.*(ex)$},
-      ~r{web/templates/.*(eex)$}
-    ]
-  ]
+# config :stg_site, Site.Endpoint,
+#   live_reload: [
+#     patterns: [
+#       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
+#       ~r{web/views/.*(ex)$},
+#       ~r{web/templates/.*(eex)$}
+#     ]
+#   ]
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

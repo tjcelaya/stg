@@ -49,11 +49,14 @@ RouterTransitionGroup = connect(_.identity)(RouterTransitionGroup)
 
 // @connect(state => ({ time: state.time }))
 class Root extends Component {
+  constructor() {
+    super()
+    this.boundHandleMenuToggle = this._handleMenuToggle.bind(this)
+  }
   _handleMenuToggle() {
     store.dispatch({ type: 'MENU_TOGGLE', menuOpen: !this.props.menuOpen })
   }
   render() {
-    window.rootProps = this.props
     return (
       <div>
         <LeftNav
@@ -76,7 +79,7 @@ class Root extends Component {
           </MenuItem>
         </LeftNav>
         <button
-              onClick={this._handleMenuToggle.bind(this)}
+              onClick={this.boundHandleMenuToggle}
               className='menu-toggle button-primary'>
           toggle menu
         </button>
