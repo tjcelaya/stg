@@ -15,7 +15,7 @@ class TTile extends Component {
 
   _onMouseDown(e, intersection) {
     e.preventDefault();
-    this.props.onMouseDown
+    L('tile mouse down')
   }
 
   componentDidMount() {
@@ -171,7 +171,8 @@ class TMap extends Component {
     this.boundAnimate =  this.onAnimate.bind(this)
 
     this.state = {
-      cameraPosition: new THREE.Vector3(0, 5, 1),
+      cameraPosition: new THREE.Vector3(0, 5, 0),
+      cameraRotation: new THREE.Quaternion(0, -0.75, -0.75, 0),
       mouseInput: null,
       camera: null,
     };
@@ -183,16 +184,23 @@ class TMap extends Component {
      .flatten()
      .map((coords) => <TTile key={`x${coords[0]}y${coords[1]}`} x={coords[0]} y={coords[1]} k={`x${coords[0]}y${coords[1]}`} meshes={TMap.meshes} />)
      .value()
+  }
 
+  componentDidMount() {
+    debugger;
+    this.refs.container.addEventListener('touchstart', this.boundTouchStart, false)
+    this.refs.container.addEventListener('mousedown', this.boundTouchStart, false)
   }
 
   handleTouchStart(e) {
     L('Touch down', e.pageX, e.pageY)
-    document.addEventListener('touchmove', this.boundTouchMove, false);
-    document.addEventListener('mousemove', this.boundTouchMove, false);
+    this.refs.container.addEventListener('touchmove', this.boundTouchMove, false);
+    this.refs.container.addEventListener('mousemove', this.boundTouchMove, false);
+    document.addEventListener('touchend', this.boundTouchEnd, false);
+    document.addEventListener('mouseup', this.boundTouchEnd, false);
 
     window.theTouchStart = e
-    Map.coords = {
+    TMap.coords = {
       dragging: true,
       x: ('touches' in e) ? e.touches[0].pageX : e.pageX,
       y: ('touches' in e) ? e.touches[0].pageY : e.pageY,
@@ -201,9 +209,9 @@ class TMap extends Component {
 
   handleTouchEnd(e) {
     L('Touch up')
-    document.removeEventListener('touchmove', this.boundTouchMove, false);
-    document.removeEventListener('mousemove', this.boundTouchMove, false);
-    Map.coords.dragging = false
+    this.refs.container.removeEventListener('touchmove', this.boundTouchMove, false);
+    this.refs.container.removeEventListener('mousemove', this.boundTouchMove, false);
+    TMap.coords.dragging = false
   }
 
   handleTouchMove(e) {
@@ -222,8 +230,14 @@ class TMap extends Component {
     }
     //Adjust our x,y based upon the x/y diff from before
     // console.clear();
-    // L('move', TMap.coords.dragging, this.state.x, this.state.y, xDiff, yDiff);
-    this.setState({ x: this.state.x - xDiff, y: this.state.y - yDiff }); // setState merges
+
+    var newCameraPosition = this.state.cameraPosition.clone()
+    newCameraPosition.x = +((this.state.cameraPosition.x - xDiff * 0.05).toFixed(2))
+    newCameraPosition.z = +((this.state.cameraPosition.z - yDiff * 0.05).toFixed(2))
+    this.setState({
+      cameraPosition: newCameraPosition
+    })
+    L('move', TMap.coords.dragging, this.state.cameraPosition.x, this.state.cameraPosition.z, xDiff, yDiff);
   }
 
   onAnimate(e) {
@@ -257,7 +271,7 @@ class TMap extends Component {
 
     return (
       <div ref='container'>
-        <h1>THREE</h1>
+        <h1>THREE: { JSON.stringify(this.state.cameraRotation) }</h1>
         <React3
               mainCamera="camera"
               width={width}
@@ -278,8 +292,8 @@ class TMap extends Component {
               aspect={aspect}
               near={0.1}
               far={1000}
-              lookAt={ORIGIN}
-              position={this.state.cameraPosition}/>
+              position={this.state.cameraPosition}
+              quaternion={this.state.cameraRotation}/>
             <pointLight intensity={1} distance={0} position={new THREE.Vector3( 0, 20, 0 )}/>
             {debugAxis}
             {t}
@@ -290,5 +304,6 @@ class TMap extends Component {
   }
 }
 
+              // lookAt={ORIGIN}
 
 export default TMap
