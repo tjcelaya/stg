@@ -32,8 +32,8 @@ class TTile extends Component {
             this.props.y * 1.5
           )}>
         <cylinderGeometry
-          radiusTop={0.9}
-          radiusBottom={0.9}
+          radiusTop={0.98}
+          radiusBottom={0.98}
           height={0.5}
           radialSegments={6}/>
         <meshPhongMaterial
@@ -169,10 +169,24 @@ class TMap extends Component {
     this.boundTouchStart = this.handleTouchStart.bind(this)
     this.boundTouchEnd = this.handleTouchEnd.bind(this)
     this.boundAnimate =  this.onAnimate.bind(this)
+    var keyLookup = {
+      81: '_x',
+      87: '_y',
+      69: '_z',
+      82: '_w',
+    }
+    this.boundKeyUp = (function (e) {
+      let amt = 0.1
+      let v = e.shiftKey ? -amt : amt;
+      let rot = this.state.cameraRotation.clone();
+      rot[keyLookup[e.keyCode]] = +((rot[keyLookup[e.keyCode]] + v).toFixed(2))
+      this.setState({ cameraRotation: rot })
+      console.log(this.state.cameraRotation)
+    }).bind(this)
 
     this.state = {
-      cameraPosition: new THREE.Vector3(0, 5, 0),
-      cameraRotation: new THREE.Quaternion(0, -0.75, -0.75, 0),
+      cameraPosition: new THREE.Vector3(0, 5, 5),
+      cameraRotation: new THREE.Euler(-1.5, 0, 0),
       mouseInput: null,
       camera: null,
     };
@@ -190,6 +204,7 @@ class TMap extends Component {
     debugger;
     this.refs.container.addEventListener('touchstart', this.boundTouchStart, false)
     this.refs.container.addEventListener('mousedown', this.boundTouchStart, false)
+    document.addEventListener('keydown', this.boundKeyUp, false)
   }
 
   handleTouchStart(e) {
@@ -232,8 +247,8 @@ class TMap extends Component {
     // console.clear();
 
     var newCameraPosition = this.state.cameraPosition.clone()
-    newCameraPosition.x = +((this.state.cameraPosition.x - xDiff * 0.05).toFixed(2))
-    newCameraPosition.z = +((this.state.cameraPosition.z - yDiff * 0.05).toFixed(2))
+    newCameraPosition.x = +((this.state.cameraPosition.x + xDiff * 0.05).toFixed(2))
+    newCameraPosition.z = +((this.state.cameraPosition.z + yDiff * 0.05).toFixed(2))
     this.setState({
       cameraPosition: newCameraPosition
     })
@@ -266,7 +281,7 @@ class TMap extends Component {
 
   render() {
     const width = window.innerWidth
-    const aspect = 2
+    const aspect = 2.2
     const height = width / aspect
 
     return (
@@ -293,7 +308,8 @@ class TMap extends Component {
               near={0.1}
               far={1000}
               position={this.state.cameraPosition}
-              quaternion={this.state.cameraRotation}/>
+              rotation={this.state.cameraRotation}
+              useQuaternion={false}/>
             <pointLight intensity={1} distance={0} position={new THREE.Vector3( 0, 20, 0 )}/>
             {debugAxis}
             {t}
